@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# VS Code local workspace settings
+.vscode/
+
+# Textbooks and reference PDFs
+resources/textbook/
+resources/**/*.pdf
+resources/**/*.epub
+
+# Simulation output
+*.vcd
+*.fst
+*.log
+*.out
+*.wlf
+
+# Build / temporary files
+build/
+tmp/
+temp/
