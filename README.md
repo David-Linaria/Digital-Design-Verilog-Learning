@@ -1,4 +1,4 @@
-# Digital Design & Verilog Tutorial
+# Digital Design & Verilog Learning
 
 A personal learning repository for digital logic design, SystemVerilog/Verilog, RTL design, and computer architecture.
 
