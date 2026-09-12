@@ -1,10 +1,10 @@
-# Digital Design & Verilog Learning
+# 💡 Digital Design & Verilog Learning
 
 A personal learning repository for digital logic design, SystemVerilog/Verilog, RTL design, and computer architecture.
 
 This repository records my notes, exercises, and small projects while studying digital hardware design, with a focus on building a solid foundation for future work in areas such as digital IC design, FPGA, computer architecture, and hardware-software co-design.
 
-## Sources & Textbooks
+## 📖 Sources & Textbooks
 
 ### Main Textbook
 
@@ -86,3 +86,5 @@ Digital-Design-Verilog-Tutorial/
         ├── DDCArv_Labs/
         ├── DDCArv_LectureSlides/
         └── Additional official companion materials
+```
+⚠️ Textbooks and copyrighted reference materials inside resources/ are kept locally for personal study and are not included in the public repository.
