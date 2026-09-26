@@ -59,27 +59,27 @@ void pinMode(int pin, int function)
 {
     switch(function) {
         case INPUT:
-            GPIO0->input_en     |= (1 << pin);   // Sets a pin as an input
+            GPIO0\rightarrowinput_en     |= (1 << pin);   // Sets a pin as an input
             break;
         case OUTPUT:
-            GPIO0->output_en    |= (1 << pin);   // Set pin as an output
-            GPIO0->iof_en       &= ~(1 << pin);
+            GPIO0\rightarrowoutput_en    |= (1 << pin);   // Set pin as an output
+            GPIO0\rightarrowiof_en       &= ~(1 << pin);
             break;
         case GPIO_IOF0:
-            GPIO0->iof_sel      &= ~(1 << pin);
-            GPIO0->iof_en       |= (1 << pin);
+            GPIO0\rightarrowiof_sel      &= ~(1 << pin);
+            GPIO0\rightarrowiof_en       |= (1 << pin);
     }
 }
 
 void digitalWrite(int pin, int val)
 {
-    if (val) GPIO0->output_val |= (1 << pin);
-    else     GPIO0->output_val &= ~(1 << pin);
+    if (val) GPIO0\rightarrowoutput_val |= (1 << pin);
+    else     GPIO0\rightarrowoutput_val &= ~(1 << pin);
 }
 
 int digitalRead(int pin)
 {
-    return (GPIO0->input_val >> pin) & 0x1;
+    return (GPIO0\rightarrowinput_val >> pin) & 0x1;
 }
 
 /////////////////////////////////////////////////////////////////////

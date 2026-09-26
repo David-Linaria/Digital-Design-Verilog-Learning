@@ -22,23 +22,23 @@ void spiInit(uint32_t clkdivide, uint32_t cpol, uint32_t cpha)
     pinMode(4, GPIO_IOF0); // MISO
     pinMode(5, GPIO_IOF0); // SCK
 
-    SPI1->sckdiv.div = clkdivide; // Set the clock divisor
+    SPI1\rightarrowsckdiv.div = clkdivide; // Set the clock divisor
 
-    SPI1->sckmode.pol = cpol; // Set the polarity
-    SPI1->sckmode.pha = cpha; // Set the phase
-    SPI1->csid.csid = 0x0; // Set the chip ID to 0
+    SPI1\rightarrowsckmode.pol = cpol; // Set the polarity
+    SPI1\rightarrowsckmode.pha = cpha; // Set the phase
+    SPI1\rightarrowcsid.csid = 0x0; // Set the chip ID to 0
 
-    SPI1->csmode.mode = 2; // CS configured as HOLD mode
+    SPI1\rightarrowcsmode.mode = 2; // CS configured as HOLD mode
 
-    SPI1->fmt.proto = 0; // Set SPI protocol to Single. DQ0 (MOSI), DQ1 (MISO)
-    SPI1->fmt.endian = 0; // Send MSb first
-    SPI1->fmt.dir = 0; // Set SPI direction
-    SPI1->fmt.len = 8; // 8 bits per frame
-    SPI1->fctrl.en = 0; // Disable SPI flash mode
+    SPI1\rightarrowfmt.proto = 0; // Set SPI protocol to Single. DQ0 (MOSI), DQ1 (MISO)
+    SPI1\rightarrowfmt.endian = 0; // Send MSb first
+    SPI1\rightarrowfmt.dir = 0; // Set SPI direction
+    SPI1\rightarrowfmt.len = 8; // 8 bits per frame
+    SPI1\rightarrowfctrl.en = 0; // Disable SPI flash mode
 
-    SPI1->delay1.interxfr = 0; // No delay in between frames
-    SPI1->delay0.cssck = 0; // Delay (in SCK cycles) between CS and SCK start
-    SPI1->delay0.sckcs = 0; // Delay (in SCK cycles) between SCK end and CS deassert
+    SPI1\rightarrowdelay1.interxfr = 0; // No delay in between frames
+    SPI1\rightarrowdelay0.cssck = 0; // Delay (in SCK cycles) between CS and SCK start
+    SPI1\rightarrowdelay0.sckcs = 0; // Delay (in SCK cycles) between SCK end and CS deassert
 
     /*  Set up watermarks in order to check whether the values are ready to be
         written or read. It seems you should be able to just read the EMPTY and
@@ -48,11 +48,11 @@ void spiInit(uint32_t clkdivide, uint32_t cpol, uint32_t cpha)
         whenever we get a single byte and the TX watermark is set to 0 so that
         it is true whenever we don't have any data in the TX
     */    
-    SPI1->ie.rxwm = 1; // Enable rx watermark
-    SPI1->ie.txwm = 1; // Enable tx watermark
+    SPI1\rightarrowie.rxwm = 1; // Enable rx watermark
+    SPI1\rightarrowie.txwm = 1; // Enable tx watermark
 
-    SPI1->rxmark.rxmark = 0; // Set rx watermark (in bytes)
-    SPI1->txmark.txmark = 1; // Set tx watermark (in bytes)
+    SPI1\rightarrowrxmark.rxmark = 0; // Set rx watermark (in bytes)
+    SPI1\rightarrowtxmark.txmark = 1; // Set tx watermark (in bytes)
 
 }
 
@@ -61,10 +61,10 @@ void spiInit(uint32_t clkdivide, uint32_t cpol, uint32_t cpha)
  *    -- return: the character received over SPI */
 uint8_t spiSendReceive(uint8_t send)
 {
-    while(!SPI1->ip.txwm); // Wait until transmit FIFO is ready for new data
-    SPI1->txdata.data = send; // Transmit the character over SPI
-    while(!SPI1->ip.rxwm);
-    return SPI1->rxdata.data; // Return received character
+    while(!SPI1\rightarrowip.txwm); // Wait until transmit FIFO is ready for new data
+    SPI1\rightarrowtxdata.data = send; // Transmit the character over SPI
+    while(!SPI1\rightarrowip.rxwm);
+    return SPI1\rightarrowrxdata.data; // Return received character
 }
 
 /* Transmits 2 characters (2 byte) over SPI and returns the received character.
@@ -75,11 +75,11 @@ uint16_t spiSendReceive16(uint16_t data)
     uint16_t volatile rec = 0;
     uint8_t char1, char2;
 
-    SPI1->csmode.mode = 2; // CS configured as HOLD mode
+    SPI1\rightarrowcsmode.mode = 2; // CS configured as HOLD mode
     char1 = spiSendReceive((data & 0xFF00) >> 8);
     char2 = spiSendReceive(data & 0x00FF);
     rec = (char1 << 8) | char2;
-    SPI1->csmode.mode = 0; // CS configured as AUTO mode
+    SPI1\rightarrowcsmode.mode = 0; // CS configured as AUTO mode
 
     return rec; // Return received character
 }

@@ -1,9 +1,14 @@
 ## 1.1 Levels of Abstraction For an Electronic Computing System
 
-Physics -> Devices -> Analog Circuits -> Digital Circuits -> Logic -> Micro-architecture -> Architecture -> Operating Systems -> Software
+$$
+Physics \rightarrow Devices \rightarrow Analog Circuits \rightarrow Digital Circuits \rightarrow Logic \rightarrow Micro-architecture \rightarrow Architecture \rightarrow Operating Systems \rightarrow Software
+$$
 
 Here are some examples on these levels:
-Electrons -> Transistors -> Amplifiers -> Logic-gates -> Adders/Memories -> Controllers -> Registers -> Device/Drivers -> Applications
+
+$$
+Electrons \rightarrow Transistors \rightarrow Amplifiers \rightarrow Logic-gates \rightarrow Adders/Memories \rightarrow Controllers \rightarrow Registers \rightarrow Device/Drivers \rightarrow Applications
+$$
 
 _**Analog circuits input and output a continuous range of voltages, while Digital circuits restrict the voltages to discrete ranges.**_
 
@@ -20,7 +25,9 @@ _**Abstraction + Discipline + three '-Y's**_
 Nibble: A group of 4 bits, or half a byte, is called a Nibble.
 => Microprocessors handle data in chuncks called _words_.
 
-$1 TB\ (terabyte) = 1024 GB\ (gigabyte) = 2^{20} MB\ (megabyte) = 2^{30} KB\ (kilobyte) = 2^{40} B\ (byte)$
+$$
+1 TB\ (terabyte) = 1024 GB\ (gigabyte) = 2^{20} MB\ (megabyte) = 2^{30} KB\ (kilobyte) = 2^{40} B\ (byte)
+$$
 
 - _**Memory capacity is usually measured in bytes (power of 2)**_
 - _**Communication speed is usually measured in 10 bits (power of 10)**_
@@ -103,3 +110,31 @@ There are two main types of transistors, _**bipolar junction transistors**_ and 
 
 - $Silicon(Si)$ + $Arsenic(As)$ => $n-type\ dopant$
 - $Silicon(Si)$ + $Boron(B)$ => $p-type\ dopant$
+
+### 1.7.2 Diodes
+
+**Definition:** The junction between p-type and n-type silicon is called a _**diode**_. In which the p-type region is called _**anode**_ and the n-type region is called _**cathode**_.
+
+- $Forward\ Biased$ : The voltage on the anode is above the voltage on the cathode;
+- $Reverse\ Biased$ : The voltage on the anode is bellow the voltage on the cathode;
+
+### 1.7.3 nMOS and pMOS Transistors
+
+MOSFET manufacturing process: _**Wafer \rightarrow Chips/Dice \rightarrow Package**_
+
+> A MOSFET behaves as a voltage-controlled switch in which the gate voltage creates an electric field that turns ON or OFF a connection between the source and drain. The term _**field effect transistor**_ comes from this principle of operation.
+
+=> Most often times, there is no current through the $gate$ ($I_G = 0$), and the magnitude of $V_{GS}$ controls the current through the $drain$, and the process is like:
+
+$$
+V_{GS} \rightarrow Electric\ field \rightarrow Change\ resistor \rightarrow Control\ I_D
+$$
+
+=> For convenience, we can view the $gate$ as a capacitor.
+
+MOSFETs are not perfect switches:
+
+- _**nMOS transistors pass 0's well but pass 1's poorly;**_
+- _**pMOS transistors pass 0's poorly but pass 1's well.**_
+
+> _**Expansion**_: nMOS transistors need a p-type substrate, and pMOS transistors need an n-type substrate. To build both flavors of transistors on the same chip, manufacturing processes typically start with a p-type wafer, then implant n-type regions called wells where the pMOS transistors should go. These processes that provide both flavors of transistors are called Complementary MOS or CMOS. CMOS processes are used to build the vast majority of all transistors fabricated today.

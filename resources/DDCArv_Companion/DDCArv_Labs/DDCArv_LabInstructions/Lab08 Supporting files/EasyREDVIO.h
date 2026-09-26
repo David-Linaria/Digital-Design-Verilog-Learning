@@ -113,15 +113,15 @@ void pinMode(int pin, int function)
 
     switch(function) {
         case INPUT:
-            GPIO0->input_en     |= (1 << gpio_pin);   // Sets a pin as an input
+            GPIO0\rightarrowinput_en     |= (1 << gpio_pin);   // Sets a pin as an input
             break;
         case OUTPUT:
-            GPIO0->output_en    |= (1 << gpio_pin);   // Set pin as an output
-            GPIO0->iof_en       &= ~(1 << gpio_pin);
+            GPIO0\rightarrowoutput_en    |= (1 << gpio_pin);   // Set pin as an output
+            GPIO0\rightarrowiof_en       &= ~(1 << gpio_pin);
             break;
         case GPIO_IOF0:
-            GPIO0->iof_sel      &= ~(1 << gpio_pin);
-            GPIO0->iof_en       |= (1 << gpio_pin);
+            GPIO0\rightarrowiof_sel      &= ~(1 << gpio_pin);
+            GPIO0\rightarrowiof_en       |= (1 << gpio_pin);
     }
 }
 
@@ -130,8 +130,8 @@ void digitalWrite(int pin, int val)
     int pin_offset = pin % 32;
     int gpio_pin = pinToGPIO(pin_offset);
 
-    if (val) GPIO0->output_val |= (1 << gpio_pin);
-    else     GPIO0->output_val &= ~(1 << gpio_pin);
+    if (val) GPIO0\rightarrowoutput_val |= (1 << gpio_pin);
+    else     GPIO0\rightarrowoutput_val &= ~(1 << gpio_pin);
 }
 
 int digitalRead(int pin)
@@ -139,7 +139,7 @@ int digitalRead(int pin)
     int pin_offset = pin % 32;
     int gpio_pin = pinToGPIO(pin_offset);
 
-    return (GPIO0->input_val >> gpio_pin) & 0x1;
+    return (GPIO0\rightarrowinput_val >> gpio_pin) & 0x1;
 }
 
 /////////////////////////////////////////////////////////////////////
