@@ -138,3 +138,60 @@ MOSFETs are not perfect switches:
 - _**pMOS transistors pass 0's poorly but pass 1's well.**_
 
 > _**Expansion**_: nMOS transistors need a p-type substrate, and pMOS transistors need an n-type substrate. To build both flavors of transistors on the same chip, manufacturing processes typically start with a p-type wafer, then implant n-type regions called wells where the pMOS transistors should go. These processes that provide both flavors of transistors are called Complementary MOS or CMOS. CMOS processes are used to build the vast majority of all transistors fabricated today.
+
+### 1.7.4 Other CMOS Logic Gates
+
+_General form of an inverting logic gate:_
+
+$$
+V_{DD}\\
+\downarrow\\
+pMOS\ pull-up\ network\\
+\downarrow\\
+inputs \rightarrow \rightarrow outputs\\
+\downarrow\\
+nMOS\ pull-down\ network\\
+\downarrow\\
+GND
+$$
+
+So there will appear two kinds of problems:
+
+1. _**Short Circuit:**_ both pull-up and pull-down networks are ON;
+2. _**Output Floats:**_ both pull-up and pull-down networks are OFF.
+
+> => To properly function the logic gates, one of the networks should be ON and the other OFF at any given time. We guarantee this by using the rule of _**conduction-complements**_.
+
+_**Conduction-Complements: When nMOS transistors are in series, pMOS transistors must be in parallel, and vice-versa.**_
+
+### 1.7.5 Transmission Gates
+
+_**Transmission Gate / Pass Gate:**_ parallel of pMOS and nMOS transistor, to perform a perfect switch that can pass both 0 and 1 well.
+
+**Switch Structure (Note that this gate is bidirectional):**
+
+$$
+EN\\
+|\\
+A\ -\ Parallel Structure\ -\ B\\
+|\\
+\overline{EN}
+$$
+
+_=> When $EN=1$ and $\overline{EN}=0$, the transmission gate is ON or Enabled, and any logic value can float between A and B._
+
+## 1.8 Power Consumption
+
+_**Digital Systems draw both static and dynamic power.**_
+(Dynamic power is the power used to charge capacitance.)
+
+How to calculate two kinds of power consumption:
+
+- **Static Power Consumption:** $P_{static} = I_{DD} V_{DD}$
+- **Dynamic Power Consumption:** $P_{dynamic} = \alpha CV_{DD}^2f$.
+
+$\alpha$ is called _**activity factor**_, and is represented by the fraction of transitions and clock cycles:
+
+$$
+\alpha = \frac{0\rightarrow1\ transitions}{clock\ cycles}
+$$
