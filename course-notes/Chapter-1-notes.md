@@ -16,9 +16,9 @@ _**Analog circuits input and output a continuous range of voltages, while Digita
 
 _**Abstraction + Discipline + three '-Y's**_
 
-1. Hierarchy: dividing a system into modules, and further subdividing modules;
-2. Modularity: modules are well-defined, so no side effect come when connecting;
-3. Regularity: uniformity among modules, reducing distinct modules designed.
+1. $Hierarchy$: dividing a system into modules, and further subdividing modules;
+2. $Modularity$: modules are well-defined, so no side effect come when connecting;
+3. $Regularity$: uniformity among modules, reducing distinct modules designed.
 
 ## 1.3 Bytes, Nibbles, and all that Jazz
 
