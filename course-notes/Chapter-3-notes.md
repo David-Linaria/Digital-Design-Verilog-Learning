@@ -4,7 +4,7 @@ _Definitions:_
 
 - $State\ Variables$: A set of bits that form the state of a sequential logic, which contains all the information about the past necessary to explain the future behavior of the circuit.
 
-# 3.2 Latches and Flip-Flops (Extension)
+## 3.2 Latches and Flip-Flops (Extension)
 
 $bistable\ element$: The fundamental building block of memory, and it has **2 stable states**.
 
@@ -43,5 +43,23 @@ $cyclic\ paths$: outputs are fed directly back to the inputs.
 
 > A flip-flop is the simplest synchronous sequential circuit.
 
-## 3.4 Finite State Machines 
+## 3.4 Finite State Machines (FSMs)
 
+**=> An FSM consists of 2 blocks of combinational logic:**
+
+1. Next State logic;
+2. Output logic (and a register that stores the state).
+
+Categories of FSMs:
+
+- $Moore\ machines$: the output only depends on the current input;
+- $Mealy\ machines$: the output depends on both the current state and the input.
+
+### 3.4.2 State Encoding
+
+_**One important decision in state encoding is the choice between binary encoding and one-hot encoding.**_
+
+- Binary encoding of $K$ states only requires $\log_2 K$ bits, while One-hot encoding requires $K$ states;
+- Thus, though one-hot encoding require more flip-flops, the output logic is often simpler, so fewer gates are needed.
+
+> In real-world problem-solving process, the best choice will depend on the FSMs.
