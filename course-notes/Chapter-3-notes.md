@@ -63,3 +63,56 @@ _**One important decision in state encoding is the choice between binary encodin
 - Thus, though one-hot encoding require more flip-flops, the output logic is often simpler, so fewer gates are needed.
 
 > In real-world problem-solving process, the best choice will depend on the FSMs.
+
+## 3.5 Timing of Sequential Logic
+
+> $Sampling$: describes the process when a flip-flop copies the input D to its output Q. This is called sampling D on the clock edge.
+
+_**The aperture of a sequential element is defined by a $setup\ time$ and a $hold\ time$, before and after the clock edge, respectively. Thus:**_
+
+$$
+Aperture\ time = Setup\ time + Hold\ time
+$$
+
+$Metastability$: a phenomenon where the flip-flop captures a value partway between 0 and 1.
+
+_Dynamic Discipline: the inputs of a sequential logic must remain stable during the setup and hold aperture time around the clock edge._
+
+### 3.5.2 System Timing
+
+_**Setup Time Constraint & Hold Time Constraint:**_
+
+consider a synchronous sequential logic consisted of:
+
+$$
+CLK1\ (R1)\ --Q1--\ Combinational Logic\ --D2--\ CLK2\ (R2)
+$$
+
+1. To Satisfy the setup time of R2:
+
+$$
+T_c \ge t_{pcq} + t_{pd} + t_{setup}\\
+=> t_{pd} \le T_c - (t_{pcq} + t_{setup}) \\
+sequencing\ overhead = t_{pcq} + t_{setup}
+$$
+
+2. To satisfy the hold time of R2:
+
+$$
+t_{ccq} + t_{cd} \ge t_{hold}\\
+=> t_{cd} \ge t_{hold} - t_{ccq}
+$$
+
+_**=> A reliable flip-flop must have a hold time $shorter$ than its contamination delay.**_
+
+> Often times the flip-flops are designed with $t_{hold} = 0$ so it's always shorter than the contamination delay.
+
+### 3.5.3 Clock Skew
+
+In reality, the clock signal does not always reach all the registers at the same time, thus causing variation in clock edges.
+
+$clock\ skew$: the variation stated above.
+
+> Clock skew effectively increases both the setup time and the hold time. It adds to the sequencing overhead, reducing the time available for useful work in the combinational logic.
+
+### 3.5.4 Metastablity
