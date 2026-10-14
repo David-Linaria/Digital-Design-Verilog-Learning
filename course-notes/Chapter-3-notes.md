@@ -115,4 +115,56 @@ $clock\ skew$: the variation stated above.
 
 > Clock skew effectively increases both the setup time and the hold time. It adds to the sequencing overhead, reducing the time available for useful work in the combinational logic.
 
-### 3.5.4 Metastablity
+### 3.5.4 Metastability
+
+$Metastable\ State$: when a flip-flop samples a changing input during its aperture time, the output Q might remain in the forbidden zone for a period of time.
+
+> The resolution time, $t_{res}$, required to resolve the flip-flop to a stable state, is a _**random variable, and the probability decreases exponentially by time:**_
+
+$$
+P(t_{res}>t) = \frac{T_0}{T_c}\mathrm{e}^{-\frac{t}{τ}}
+$$
+
+_where $T_c$ is clock period, $T_0$ and $τ$ are characteristic of the flip-flop._
+
+### 3.5.5 Synchronizers, MTBF
+
+> To guarantee good logic levels, all asynchronous inputs should go through synchronizers.
+
+$Synchronizer$: A synchronizer is a device that receives an asynchronous input $D$ and clock $CLK$, and produces an output $Q$ within a bounded amount of time, and _**the output has a valid logic level with extremely high probability.**_
+
+> This means, even though the input $D$ might be changing in the aperture time of the synchronizer, the output $Q$ is still 0 or 1, but not random voltage (in metastability).
+
+=> We say that a synchronizer _**fails**_, if the output is metastable.
+
+_**MTBF (Mean Time Between Failures)**_ is the average amount of time between failures of the system.
+
+=> For a synchronizer, **MTBF explodes exponentially with more waiting time**. For most systems, a synchronizer waits for one clock cycle to ensure a safe MTBF.
+
+## 3.6 Parallelism
+
+_Definitions:_
+
+1. $token$: _**a group of**_ inputs that are processed to produce _**a group of**_ outputs.
+2. $latency$: the time required for one $token$ to pass through _**the system**_ from start to end.
+3. $thoughput$: the number of tokens that can be produced per unit time.
+
+> => The throughput can be improved by processing several tokens at the same time. This introduces $parallelism$, which comes in 2 forms:
+
+- $spatial\ parallelism$: _**multiple copies of the hardware are provided**_ so that multiple tasks can be done at the same time.
+- $temporal\ parallelism$ (or $pipelining$): a _**task is broken into stages**_, like an assembly line. Multiple tasks can be spread across the stages.
+
+> Pipelining is like water flux. In a system that is divided into separate stages, pipelining measures the token processing speed within, while latency view the system as a whole.
+
+Thus, in a pipelined system:
+
+- $Latency$ is the time a token travels from the start to the end;
+- $Throughput$ is _**the reciprocal of the largest latency**_ of all the stages within.
+
+> Pipelining is particularly attractive because it speeds up a circuit without duplicating the hardware.
+
+_The bane of parallelism is $dependencies$. If a current task is dependent on the result of a prior task, rather than just prior steps in the current task, the task cannot start until the prior task has completed._
+
+## 3.7 Summary
+
+- A group of flip-flops connected to the same clock is called a $register$.
