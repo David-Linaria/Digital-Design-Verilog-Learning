@@ -328,7 +328,7 @@ module latch(input logic clk,
              input logic d,
              output logic q);
     
-    always_latch
+    always_latch    // no sensitivity list because it is auto created in latches.
         if (clk) q <= d;
     
 endmodule
