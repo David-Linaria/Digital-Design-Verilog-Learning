@@ -124,7 +124,7 @@ _**Exceptions:**_ '0 and '1 is to _**fill all the bits**_ 0 or 1, respectively.
 
 ### 4.2.8 Z's and X's
 
-> HDLs use z to imply floating value, and x to inply invalid logic levels.
+> HDLs use z to imply floating value, and x to imply invalid logic levels.
 
 - z: no inputs;
 - x: contradictory inputs, or simultaneous inputs.
@@ -143,3 +143,193 @@ endmodule
 
 - `logic` signals can only have a single driver. In other words, the output have a specified input to drive.
 - `tri` is a _**Net type**_ in SystemVerilog. Tristate busses can have multiple drivers, and when working, only **1 driver is active at the same time**, or the output will become z (High Impedance, or _**disconnected**_)
+
+### 4.2.9 Bit Swizzling
+
+Sometimes we need to operate on the subset of a bus or to concatenate signals from different busses:
+
+```SystemVerilog
+assign y = {c[2:1], {3{d[0]}}, c[0], 3'b101}    // y = c2 c1 d0 d0 d0 c0 1 0 1
+```
+
+### 4.2.10 Delays
+
+HDL statements can be associated with delays:
+
+```SystemVerilog
+'timescale unit/precision
+```
+
+in which:
+
+- `timescale` is the keyword of syntax;
+- `unit` is the unit for the number in statements;
+- `precision` is the precision of simulations.
+
+> If not declared, the default unit and precision are 1ns both.
+
+```SystemVerilog
+'timescale 1ns/1ps
+
+module example(input logic a,b,c,
+               output logic y);
+
+    logic aa,bb,cc,n1,n2,n3;
+
+    assign #1 {ab, bb, cb} = ~{a, b, c};    // inverters have a delay of 1ns;
+    assign #2 n1 = ab & bb & cb;
+    assign #2 n2 = a & bb & cb;
+    assign #2 n3 = a & bb & c;  // AND gates have a delay of 2ns;
+    assign #4 y = n1 | n2 | n3;     // OR gate has a delay of 4ns;
+
+endmodule
+```
+
+## 4.3 Structural Modeling
+
+Same as the conventional programming language, we can use $instances$ in SystemVerilog to reduce tedious repetition.
+
+> Example: Building a 4:1 MUX from three 2:1 MUX:
+
+```SystemVerilog
+module mux4(input logic [3:0] d0,d1,d2,d3,
+            input logic [1:0] s,
+            output logic [3:0] y);
+
+    logic [3:0] low, high;
+
+    mux2 lowmux(d0, d1, s[0], low);
+    mux2 highmux(d2, d3, s[0], high);
+    mux2 finalmux(low, high, s[1], y);
+
+endmodule
+```
+
+> Example: Using tristate buffers to build a 2:1 MUX:
+
+```SystemVerilog
+module mux2(input logic [3:0] d0, d1,
+            input logic s,
+            output tri [3:0] y);
+
+    tristate t0(d0, ~s, y);
+    tristate t1(d1, s, y);
+
+endmodule
+```
+
+=> In general, complex systems are designed $hierarchically$. _**The overall system is described structurally until the pieces are simple enough to be described behaviorally.**_
+
+## 4.4 Sequential Logic
+
+### 4.4.1 Registers
+
+=> The vast majority of modern commercial systems are built with registers using _**positive-edge triggered D flip-flops.**_
+
+In SystemVerilog, `always` statements, signals keep their old value until an event in the $sensitivity\ list$ takes place that explicitly causes them to change.
+
+_**Basic syntax of always statement:**_
+
+```SystemVerilog
+always @(sensitivity list)
+    statement;  // operandA <= operandB
+```
+
+in which:
+
+- `always` can be `always_ff`, `always_latch`, and `always_comb`, which are introduced by SystemVerilog to produce a warning if anything else is implied.
+- `<=` is called $nonblocking\ assignment$, it replaces `=` in the `always` statement.
+
+> Example: A 4-bit D flip-flop:
+
+```SystemVerilog
+module flop(input logic     clk,
+            input logic [3:0] d,
+            output logic [3:0] q);
+
+    always_ff @(posedge clk)
+        q <= d;
+
+endmodule
+```
+
+### 4.4.2 Resettable Registers
+
+Distinguishing synchronous or asynchronous inputs in a schematic can be difficult, but they have big differences in the code.
+
+> Asynchronous RESET Register
+
+```SystemVerilog
+module flopar(input logic   clk,
+              input logic   reset,
+              input logic [3:0] d,
+              output logic [3:0] q);
+
+    always_ff @(posedge clk, posedge reset)
+        if (reset) q <= 4'b0;
+        else       q <= d;
+
+endmodule
+```
+
+> Synchronous RESET Register
+
+```SystemVerilog
+module flopar(input logic   clk,
+              input logic   reset,
+              input logic [3:0] d,
+              output logic [3:0] q);
+
+    always_ff @(posedge clk)
+        if (reset) q <= 4'b0;
+        else       q <= d;
+
+endmodule
+```
+
+### 4.4.3 Enabled Registers
+
+> Input logic $EN$ is similar to $RESET$ above, but most ofte times $EN$ is not in the sensitivity list.
+
+### 4.4.4 Multiple Registers
+
+In SystemVerilog, a single `always` statement can be used to describe multiple registers connected to the same clock.
+
+> Example: two cascaded registers using the same clock:
+
+```SystemVerilog
+module sync(input logic clk,
+            input logic d,
+            output logic q);
+
+    logic n1;
+
+    always_ff @(posedge clk)
+        begin
+            n1 <= d;
+            q <= n1;
+        end
+
+endmodule
+```
+
+_**NOTICE: non-blocking assignment `<=` here is extremely important. Regular assignment `=` will perform like the ones in programming language, causing q to sample the new n1 instead of the n1 in the last clock period.**_
+
+### 4.4.5 Latches
+
+The latch becomes opaque when the clock is LOW, retaining its old state.
+
+=> However, not all synthesis tools support latches well. Thus, better use edge-triggered flip-flops instead of latches.
+
+> Example: D latch
+
+```SystemVerilog
+module latch(input logic clk,
+             input logic d,
+             output logic q);
+    
+    always_latch
+        if (clk) q <= d;
+    
+endmodule
+```
