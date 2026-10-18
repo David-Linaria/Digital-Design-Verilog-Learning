@@ -327,9 +327,9 @@ The latch becomes opaque when the clock is LOW, retaining its old state.
 module latch(input logic clk,
              input logic d,
              output logic q);
-    
+
     always_latch    // no sensitivity list because it is auto created in latches.
         if (clk) q <= d;
-    
+
 endmodule
 ```
