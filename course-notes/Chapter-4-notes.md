@@ -415,3 +415,5 @@ endmodule
 ```
 
 **NOTICE:** only when _**all possible inputs have corresponding outputs**_ can a `if` statement be combinational. Otherwise it is sequential.
+
+###
