@@ -333,3 +333,85 @@ module latch(input logic clk,
 
 endmodule
 ```
+
+## 4.5 More Combinational Logic
+
+In SystemVerilog, `always` can also be used to describe combinational logic. The basic syntax is `always_comb`, which is _**equivalent to**_ `always @(*)`, which:
+
+_**whenever any signals on the right-hand side of `<=` or `=` in the `always` statement change, all the statements will be reevaluated.**_
+
+> Example: a bank of four inverters:
+
+```SystemVerilog
+module inv(input logic [3:0] a,
+           output logic [3:0] y);
+
+    always_comb begin
+        y = ~a;
+    end
+
+endmodule
+```
+
+> `always_comb` is a specified syntax in SystemVerilog, which can throw a warning when the code inside is not combinational logic.
+
+=> then why bother writing more lines to describe a combinational logic? This is because a much more variety of statements can be used inside the `always` block, for example the `case` statement.
+
+_**!!! KINDS OF ASSIGNMENTS IN SYSTEMVERILOG !!!**_
+
+1. $continuous\ assignment$ `=`: used outside `always` blocks, which **only describes the hardware, and can be disordered.**
+2. $blocking\ assignment$ `=`: used inside `always` blocks, and is equivalent to the `=` in programming language, which is **evaluated in order and together.**
+3. $non\ blocking\ assignment$ `<=`: used in side `always` blocks, and is **evaluated with the last value** on the right-hand side of the statement.
+
+**=> Obviously, it is better to use blocking assignments for combinational logic, and non-blocking assignments for sequential logic.**
+
+### 4.5.1 Case Statements
+
+In SystemVerilog, `case` statements must appear inside `always` statements. It offers a higher level of abstraction.
+
+> Example: a seven-segment display decoder
+
+```SystemVerilog
+module sevenseg (
+    input  logic [3:0] data,
+    output logic [6:0] segments
+);
+    always_comb
+        case (data)
+            // abc_defg
+            0: segments = 7'b111_1110;
+            1: segments = 7'b011_0000;
+            2: segments = 7'b110_1101;
+            3: segments = 7'b111_1001;
+            4: segments = 7'b011_0011;
+            5: segments = 7'b101_1011;
+            6: segments = 7'b101_1111;
+            7: segments = 7'b111_0000;
+            8: segments = 7'b111_1111;
+            9: segments = 7'b111_0011;
+            default: segments = 7'b000_0000;
+        endcase
+endmodule
+```
+
+### 4.5.2 If Statements
+
+In SystemVerilog, `if` statements must appear inside `always` statements. It offers a higher level of abstraction.
+
+> Example: priority circuit
+
+```SystemVerilog
+module priorityckt (
+    input  logic [3:0] a,
+    output logic [3:0] y
+);
+    always_comb
+        if (a[3]) y = 4'b1000;
+        else if (a[2]) y = 4'b0100;
+        else if (a[1]) y = 4'b0010;
+        else if (a[0]) y = 4'b0001;
+        else y = 4'b0000;
+endmodule
+```
+
+**NOTICE:** only when _**all possible inputs have corresponding outputs**_ can a `if` statement be combinational. Otherwise it is sequential.
