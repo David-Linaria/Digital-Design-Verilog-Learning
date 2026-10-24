@@ -416,4 +416,189 @@ endmodule
 
 **NOTICE:** only when _**all possible inputs have corresponding outputs**_ can a `if` statement be combinational. Otherwise it is sequential.
 
-###
+### Truth Tables With Don't Cares
+
+The `casez` statement acts like a case statement except that it also recognizes `?` as _don't care_.
+
+> Example: Priority circuits with don't cares
+
+```SystemVerilog
+module prioritycase (
+    input  logic [3:0] a,
+    output logic [3:0] y
+);
+
+    always_comb begin
+        casez (a)
+            4'b1???: y = 4'b1000;
+            4'b01??: y = 4'b0100;
+            4'b001?: y = 4'b0010;
+            4'b0001: y = 4'b0001;
+            default: y = 4'b0000;
+        endcase
+    end
+
+endmodule
+```
+
+## 4.6 Finite State Machines
+
+=> One crazy thing about $HDL$ on $RTL$ is that we don't need to specify the boolean expressions of each state or input, _**but to simply describe the states and their transition logic.**_
+
+> Example: Divide-by 3 FSM
+
+```SystemVerilog
+module divideby3FSM (
+    input  logic clk,
+    input  logic reset,
+    output logic y
+);
+
+    typedef enum logic [1:0] {
+        S0,
+        S1,
+        S2
+    } statetype;
+
+    statetype state, nextstate;
+
+    // state register, asynchronous reset
+    always_ff @(posedge clk, posedge reset) begin
+        if (reset) state <= S0;
+        else state <= nextstate;
+    end
+
+    // next state logic
+    always_comb begin
+        case (state)
+            S0: nextstate = S1;
+            S1: nextstate = S2;
+            S2: nextstate = S0;
+            default: nextstate = S0;
+        endcase
+    end
+
+    // output logic
+    assign y = (state == S0);
+
+endmodule
+```
+
+- The enumerated encodings default to numerical order: `S0 = 00`, `S1 = 01`, and `S2 = 10`.
+- Because the next state logic should be combinational, a `default` is necessary, **even though the state `2'b11` should never arise.**
+
+> Example: Mealy Machine
+
+```Systemverilog
+module patternMealy (
+    input  logic clk,
+    input  logic reset,
+    input  logic a,
+    output logic y
+);
+
+    // define states
+    typedef enum logic {
+        S0,
+        S1
+    } statetype;
+    statetype state, nextstate;
+
+    // register
+    always_ff @(posedge clk, posedge reset) begin
+        if (reset) state <= S0;
+        else state <= nextstate;
+    end
+
+    // next state logic
+    always_comb begin
+        case (state)
+            S0: begin
+                if (a) nextstate = S0;
+                else nextstate = S1;
+            end
+            S1: begin
+                if (a) nextstate = S0;
+                else nextstate = S1;
+            end
+            default: nextstate = S0;
+        endcase
+    end
+
+    // output logic
+    assign y = (a & state == S1);
+
+endmodule
+```
+
+## 4.7 Data Types
+
+### 4.7.1 SystemVerilog
+
+Prior to SystemVerilog, Verilog commonly used two types: `reg` and `wire`:
+
+- `reg`: In Verilog, if a signal appears on the **left-hand side** of `<=` or `=` in an `always` block, it must be declared as `reg`;
+- Otherwise it should be declared as `wire`.
+
+> Hence, a `reg` signal might be the output of a flip-flop, a latch, or combinational logic, depending on the code blocks.
+
+=> Nearly all data in SystemVerilog can be declared as `logic`, except the signals with multiple drivers, which should be declared as `net`.
+
+- When a `tri` net is driven to a single value by one or more drivers, it takes on that value. When it is undriven, it floats `z`.
+- When it is driven to a different value (`0`, `1`, or `x`) by multiple drivers, it is in contention `x`.
+
+## Parameterized Modules
+
+HDLs permit variable bit widths using parameterized modules.
+
+> Example: parameterized N-bit 2:1 MUX
+
+```SystemVerilog
+module mux2 #(
+    parameter width = 8
+) (
+    input logic [width-1:0] d0, d1,
+    input logic s,
+    output logic [width-1:0] y
+);
+    assign y = s ? d1 : d0;
+endmodule
+
+module mux4_12 (
+    input  logic [11:0] d0, d1, d2, d3,
+    input  logic [ 1:0] s,
+    output logic [11:0] y
+);
+    logic [11:0] low, hi;
+    mux2 #(12) lowmux (d0, d1, s[0], low);
+    mux2 #(12) himux (d2, d3, s[0], hi );
+    mux2 #(12) outmux (low, hi, s[1], y);
+endmodule
+```
+
+NOTICE: DO NOT confuse the use of `#` sign indicating $delays$ with `#(...)` indicating overriding parameters.
+
+SystemVerilog also use `generate` to produce a variable amount of hardware, which can contain `for` loops.
+
+> Example: N input AND gate built from 2 input AND gate
+
+```SystemVerilog
+module andN #(
+    parameter width = 8
+) (
+    input logic [width-1:0] a,
+    output logic y
+);
+    genvar i;
+    logic [width-1:0] x;
+    generate
+        assign x[0] = a[0];
+        for (i = 1; i < width; i = i + 1) begin : forloop
+            assign x[i] = a[i] & x[i-1];
+        end
+    endgenerate
+    assign y = x[width-1];
+endmodule
+```
+
+NOTICE: The `begin` in a `generate` for loop must be followed by a `:` and an arbitrary label (`forloop`, in this case).
