@@ -547,7 +547,7 @@ Prior to SystemVerilog, Verilog commonly used two types: `reg` and `wire`:
 - When a `tri` net is driven to a single value by one or more drivers, it takes on that value. When it is undriven, it floats `z`.
 - When it is driven to a different value (`0`, `1`, or `x`) by multiple drivers, it is in contention `x`.
 
-## Parameterized Modules
+## 4.8 Parameterized Modules
 
 HDLs permit variable bit widths using parameterized modules.
 
