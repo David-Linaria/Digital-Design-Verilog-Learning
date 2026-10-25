@@ -602,3 +602,90 @@ endmodule
 ```
 
 NOTICE: The `begin` in a `generate` for loop must be followed by a `:` and an arbitrary label (`forloop`, in this case).
+
+## 4.9 Testbenches
+
+A $testbench$ is an HDL module that is used to test another module, called the $device\ under\ test$ (DUT).
+
+=> the input and the desired output pattern is called $test\ vectors$.
+
+Testbenches use `initial` statements, which can only be used in testbenches for simulation.
+
+> Example: simple testbench with manual check
+
+```SystemVerilog
+module testbench ();
+    logic a, b, c, y;
+
+    sillyfunction dut (a,b,c,y);
+
+    initial begin
+        a = 0;b = 0;c = 0;#10;
+        c = 1;#10;
+        b = 1;c = 0;#10;
+        c = 1;#10;
+        a = 1;b = 0;c = 0;#10;
+        c = 1;#10;
+        b = 1;c = 0;#10;
+        c = 1;#10;
+    end
+
+endmodule
+```
+
+For a self-checking testbench, SystemVerilog uses `assert` and `else` statement. If the condition inside `assert` statement is false, `else` will be executed.
+
+> Example: self-checking testbench for more complex DUTs
+
+```SystemVerilog
+module testbench3 ();
+
+    logic clk, reset;
+    logic a, b, c, y, yexpected;
+    logic [31:0] vectornum, errors;
+    logic [3:0] testvectors [10000:0]; // 10001 testvectors to contain the possiblities in file.
+
+    sillyfunction dut(a,b,c,y);
+
+    // generate clock
+    always begin
+        clk = 1; #5; clk = 0; #5;
+    end
+
+    // load vectors and pulse reset
+    initial begin
+        $readmemb("example.txt", testvectors);
+        vectornum = 0; errors = 0;
+        reset = 1; #22; reset = 0;
+    end
+
+    // apply testvectors on rising edge of the clock
+    always @(posedge clk) begin
+        #1; {a,b,c,yexpected} = testvectors[vectornum];
+    end
+
+    // check results on falling edge of the clock
+    always @(negedge clk) begin
+        if (~reset) begin
+            if (y !== yexpected) begin
+                $display("Error: inputs = %b", {a,b,c});
+                $display("Outputs = %b (%b expected)", y, yexpected);
+                errors = errors + 1;
+            end
+            vectornum = vectornum + 1;
+            // when exceeding the possibilities, stop the checking process
+            if (testvectors[vectornum] === 4'bx) begin
+                $display("%d tests completed with %d errors", vectornum, errors);
+                $stop;
+            end
+        end
+    end
+
+endmodule
+```
+
+- `$readmemb` reads the members inside a file of binary numbers. Respectively, there are `$readmemd`, `$readmemh`.
+- `$display` prints the string and variables can be written as `%b` and `%d`, meaning binary and decimal values.
+- `$stop` stops the simulation.
+
+**NOTICE: `initial` only executes once at the start of the module, when t = 0. Thus we have to initialize `vectornum` and `errors` inside it, or they will be `assign` to 0/1.**
